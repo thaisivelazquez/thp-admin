@@ -29,7 +29,8 @@ export default function Page() {
     const [profilesRes, imagesRes, captionsRes] = await Promise.all([
       supabase.from('profiles').select('*').range(profileFrom, profileTo),
       supabase.from('images').select('*').range(imageFrom, imageTo),
-      supabase.from('captions').select('*, images(url)').range(captionFrom, captionTo),
+      // 👇 updated to also fetch image_description
+      supabase.from('captions').select('*, images(url, image_description)').range(captionFrom, captionTo),
     ])
 
     if (!profilesRes.error) setProfiles(profilesRes.data)
@@ -248,7 +249,12 @@ export default function Page() {
               <tr>
                 <th style={{ padding: '8px' }}>ID</th>
                 <th style={{ padding: '8px' }}>Image</th>
-                <th style={{ padding: '8px' }}>Data</th>
+                {/* 👇 new column */}
+                <th style={{ padding: '8px' }}>Image Description</th>
+                <th style={{ padding: '8px' }}>Caption</th>
+                <th style={{ padding: '8px' }}>Visibility</th>
+                <th style={{ padding: '8px' }}>Likes</th>
+                <th style={{ padding: '8px' }}>Created</th>
               </tr>
             </thead>
             <tbody>
@@ -262,7 +268,14 @@ export default function Page() {
                       'No image'
                     )}
                   </td>
-                  <td style={{ padding: '8px' }}>{JSON.stringify(caption)}</td>
+                  {/* 👇 new column */}
+                  <td style={{ padding: '8px', maxWidth: '200px' }}>
+                    {caption.images?.image_description ?? '—'}
+                  </td>
+                  <td style={{ padding: '8px', maxWidth: '200px' }}>{caption.content}</td>
+                  <td style={{ padding: '8px' }}>{caption.is_public ? '🌐 Public' : '🔒 Private'}</td>
+                  <td style={{ padding: '8px' }}>{caption.like_count}</td>
+                  <td style={{ padding: '8px' }}>{new Date(caption.created_datetime_utc).toLocaleString()}</td>
                 </tr>
               ))}
             </tbody>
