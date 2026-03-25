@@ -181,6 +181,42 @@ export default function Page() {
     return <p className="loading">Loading...</p>
   }
 
+  if (isAdmin === false) {
+    return (
+      <div className="login-wrapper">
+        <div className="login-card">
+          <div className="login-logo-wrapper">
+            <div className="login-logo-tile">HA</div>
+            <div>
+              <div className="login-brand-label">Humor Project</div>
+              <h1 className="login-title">
+                Access Denied
+              </h1>
+            </div>
+          </div>
+
+          <div className="login-divider" />
+
+          <p className="login-description">
+            Your account <strong>{user.email}</strong> does not have admin access.
+            Please contact an administrator if you believe this is a mistake.
+          </p>
+
+          <button onClick={logout} className="login-google-btn">
+            Sign Out
+          </button>
+
+          <p className="login-footer-note">Access is restricted to verified admins only.</p>
+        </div>
+      </div>
+    )
+  }
+
+
+  if (isAdmin === null) {
+    return <p className="loading">Loading...</p>
+  }
+
   const initials = user.email?.slice(0, 1).toUpperCase()
 
   return (
